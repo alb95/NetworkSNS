@@ -1,0 +1,5 @@
+networkx
+statsmodels
+dynetx
+numpy
+scipy
