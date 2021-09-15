@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>networksns.centrality_measures.node_directed_subgraph_centrality &#8212; NetowrkSNS 1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="networksns.centrality_measures.broadcast_centrality" href="networksns.centrality_measures.broadcast_centrality.html" />
+    <link rel="prev" title="networksns.centrality_measures.directed_subgraph_centrality" href="networksns.centrality_measures.directed_subgraph_centrality.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="networksns-centrality-measures-node-directed-subgraph-centrality">
+<h1>networksns.centrality_measures.node_directed_subgraph_centrality<a class="headerlink" href="#networksns-centrality-measures-node-directed-subgraph-centrality" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="networksns.centrality_measures.node_directed_subgraph_centrality">
+<span class="sig-prename descclassname"><span class="pre">networksns.centrality_measures.</span></span><span class="sig-name descname"><span class="pre">node_directed_subgraph_centrality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-07</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#networksns.centrality_measures.node_directed_subgraph_centrality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the hub and the authority centrality of node <span class="math notranslate nohighlight">\(u\)</span>.</p>
+<p>If node <span class="math notranslate nohighlight">\(u\)</span> is the <span class="math notranslate nohighlight">\(i^{th}\)</span> node of the graph, denoting with <span class="math notranslate nohighlight">\(A\)</span> the adjacency matrix of <span class="math notranslate nohighlight">\(G\)</span>, with <span class="math notranslate nohighlight">\(\mathcal{A}=\begin{pmatrix} 0 &amp; A \\ A^T &amp; 0 \end{pmatrix}\)</span> the adjacency matrix of the associated undirected bipartite graph, with <span class="math notranslate nohighlight">\(\mathbf{0}\)</span> and <span class="math notranslate nohighlight">\(e_i\)</span> the vector of all zeros and the <span class="math notranslate nohighlight">\(i^{th}\)</span> vector of the canonical basis , hub centrality and authority centrality of the <span class="math notranslate nohighlight">\(i^{th}\)</span> node of <span class="math notranslate nohighlight">\(G\)</span> are defined as</p>
+<blockquote>
+<div><p><span class="math notranslate nohighlight">\(\phantom{aaaaaaa} h_i(G) = [e^\mathcal{A}]_{ii} = e_i^T\cosh{\left(\sqrt{A A^T}\right)}e_i  = \begin{pmatrix} e_i^T &amp; \mathbf{0}^T \end{pmatrix}  e^{\mathcal{A}}\begin{pmatrix} e_i \\ \mathbf{0} \end{pmatrix}\)</span>,
+<span class="math notranslate nohighlight">\(\phantom{aaaaa}a_i(G) = [e^\mathcal{A}]_{N+i N+i} = e_i^T\cosh{\left(\sqrt{A^T A}\right)}e_i = \begin{pmatrix} \mathbf{0}^T &amp; e_i^T \end{pmatrix}  e^{\mathcal{A}}\begin{pmatrix} \mathbf{0} \\ e_i \end{pmatrix}\)</span>.</p>
+</div></blockquote>
+<p>See <a class="footnote-reference brackets" href="#id2" id="id1">1</a> for further details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>G</strong> (<em>DiGraph object</em>) – a directed graph.</p></li>
+<li><p><strong>u</strong> (<em>node_id</em>) – node in <span class="math notranslate nohighlight">\(G\)</span>.</p></li>
+<li><p><strong>t</strong> (<em>scalar</em><em>, </em><em>optional</em>) – when computing the total hub and authority communicabilities multiply the adjacency matrix by <span class="math notranslate nohighlight">\(t\)</span>, default: 1.</p></li>
+<li><p><strong>tol</strong> (<em>float</em><em>,</em><em>optional</em>) – tolerance for convergence, relative accuracy, default: 1e-7.</p></li>
+<li><p><strong>maxit</strong> (<em>integer</em><em>, </em><em>optional</em>) – maximum number of Lanczos iterations, default: 50</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>hc_u</strong> (<em>dict</em>) – hub centrality of <span class="math notranslate nohighlight">\(u\)</span>..</p></li>
+<li><p><strong>ac_u</strong> (<em>dict</em>) – authority centrality of <span class="math notranslate nohighlight">\(u\)</span>..</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="kn">from</span> <span class="nn">networksns</span> <span class="kn">import</span> <span class="n">centrality_measures</span> <span class="k">as</span> <span class="n">cm</span>
+<span class="gp">&gt;&gt;&gt; </span> <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+</pre></div>
+</div>
+<p>Create graph <span class="math notranslate nohighlight">\(G\)</span>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span>   <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">G</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">G</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">G</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">G</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">       OutEdgeView([(1, 2), (1, 3), (2, 3), (3, 1)])</span>
+</pre></div>
+</div>
+<p>Compute hub and authority centrality.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span>   <span class="n">hc</span><span class="p">,</span> <span class="n">ac</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">directed_subgraph_centrality</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>Michele Benzi, Ernesto Estrada and Christine Klymko (2013),
+Ranking hubs and authorities using matrix functions,
+Linear Algebra Appl., 438, 2447–2474.
+<a class="reference external" href="https://doi.org/10.1016/j.laa.2012.10.022">https://doi.org/10.1016/j.laa.2012.10.022</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/Logo_3D_NetworkSNS.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../download.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../algorithms.html">Algorithms</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../algorithms.html">Algorithms</a><ul>
+      <li>Previous: <a href="networksns.centrality_measures.directed_subgraph_centrality.html" title="previous chapter">networksns.centrality_measures.directed_subgraph_centrality</a></li>
+      <li>Next: <a href="networksns.centrality_measures.broadcast_centrality.html" title="next chapter">networksns.centrality_measures.broadcast_centrality</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Alberto Bucci.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/generated_alg/networksns.centrality_measures.node_directed_subgraph_centrality.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

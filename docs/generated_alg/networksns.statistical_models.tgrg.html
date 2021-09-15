@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>networksns.statistical_models.tgrg &#8212; NetowrkSNS 1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="networksns.statistical_models.tgrg_directed_simulation" href="networksns.statistical_models.tgrg_directed_simulation.html" />
+    <link rel="prev" title="networksns.statistical_models.tgrg_simulation" href="networksns.statistical_models.tgrg_simulation.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="networksns-statistical-models-tgrg">
+<h1>networksns.statistical_models.tgrg<a class="headerlink" href="#networksns-statistical-models-tgrg" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="networksns.statistical_models.tgrg">
+<span class="sig-prename descclassname"><span class="pre">networksns.statistical_models.</span></span><span class="sig-name descname"><span class="pre">tgrg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#networksns.statistical_models.tgrg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate by an expectation-maximization algorithm the parameters of the Temporally Generalized Random Graph model (<span class="math notranslate nohighlight">\(TGRG\)</span>).</p>
+<p>For the <span class="math notranslate nohighlight">\(TGRG\)</span> model <a class="footnote-reference brackets" href="#id2" id="id1">1</a>, with temporal network is represented by a time series of adjacency matrices <span class="math notranslate nohighlight">\(\{A_{ij}^t\}_{i,j=1,\ldots, n}^{t=1,\ldots,s}\)</span>, each node <span class="math notranslate nohighlight">\(i\)</span> is described by a latent variable <span class="math notranslate nohighlight">\(\theta_i^t\)</span>, namely the fitness of the node, which evolves over time by following a covariance stationary autoregressive process <span class="math notranslate nohighlight">\(AR(1)\)</span>:</p>
+<p><span class="math notranslate nohighlight">\(\phantom{aaaaaaaaaaaaaaaaaaa}\theta_i^t = \varphi_{0,i} + \varphi_{1,i} \theta_i^{t-1} + \epsilon_i^t\)</span>,</p>
+<p>with <span class="math notranslate nohighlight">\(\varphi_{0,i}\in \mathbb{R}\)</span>, <span class="math notranslate nohighlight">\(|\varphi_{1,i}|&lt;1\)</span>, and i.i.d. normal innovations <span class="math notranslate nohighlight">\(\epsilon_i^t\sim \mathcal{N}(0, \sigma_i^2)\)</span>.</p>
+<p>Then, the observation equation for the network snapshot at time <span class="math notranslate nohighlight">\(t\)</span> is given by <span class="math notranslate nohighlight">\(\binom{N}{2}\)</span> independent Bernoulli trials whose conditional probability is:</p>
+<p><span class="math notranslate nohighlight">\(\phantom{aaaaaaaaaaaaaaaaaaa}\mathbb{P}(A^t| \Theta^t) = \prod_{i&lt;j} \frac{e^{A^t_{ij}(\theta_i^t + \theta_j^t)}}{1 + e^{\theta_i^t + \theta_j^t}}\)</span>,</p>
+<p>with <span class="math notranslate nohighlight">\(\Theta^t \equiv \{\theta_i^t\}_{i = 1, \dots, n}\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time_series</strong> (<em>List object</em>) – List of symmetric adjacency matrices [<span class="math notranslate nohighlight">\(A_1, \dots, A_T\)</span>] with binary entries and zero diagonal.</p></li>
+<li><p><strong>tol</strong> (<em>float</em>) – Relative error of the estimated parameters. Default: 1e-2.</p></li>
+<li><p><strong>maxit</strong> (<em>integer</em>) – Maximum number of iterations in the learning process. Default: 1e2.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>phi_0</strong> (<em>array</em>) – Vector with the estimated values of the <span class="math notranslate nohighlight">\({\varphi_0}_i\)</span>.</p></li>
+<li><p><strong>phi_1</strong> (<em>array</em>) – Vector with the estimated values of <span class="math notranslate nohighlight">\({\varphi_1}_i\)</span>,</p></li>
+<li><p><strong>sigma</strong> (<em>array</em>) – Vector with the estimated values of <span class="math notranslate nohighlight">\(\sigma_i\)</span>,</p></li>
+<li><p><strong>theta_naive</strong> (<em>array_like</em>) – Matrix that in the entry <span class="math notranslate nohighlight">\((i, t)\)</span> has a naive estimation of the <span class="math notranslate nohighlight">\(\theta_i^t\)</span>.</p></li>
+<li><p><strong>theta</strong> (<em>array_like</em>) – Matrix that in the entry <span class="math notranslate nohighlight">\((i, t)\)</span> has the estimated values of <span class="math notranslate nohighlight">\(\theta_i^t\)</span>.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="kn">from</span> <span class="nn">networksns</span> <span class="kn">import</span> <span class="n">statistical_models</span> <span class="k">as</span> <span class="n">sm</span>
+<span class="gp">&gt;&gt;&gt; </span> <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+<p>Create temporal network</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span>   <span class="n">n</span> <span class="o">=</span> <span class="mi">60</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">T</span> <span class="o">=</span> <span class="mi">150</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">phi0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.2</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">phi1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.6</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">time_series</span> <span class="o">=</span> <span class="n">tgrg_simulation</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">phi_0</span><span class="o">=</span><span class="n">phi0</span><span class="p">,</span> <span class="n">phi_1</span><span class="o">=</span><span class="n">phi1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Estimate the <span class="math notranslate nohighlight">\(TGRG\)</span> model parameters</p>
+<blockquote>
+<div><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span>   <span class="n">phi_0</span><span class="p">,</span> <span class="n">phi_1</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">theta_naive</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tgrg</span><span class="p">(</span><span class="n">time_series</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>Mazzarisi, P., Barucca, P., Lillo, F. and Tantari, D., 2020.
+A dynamic network model with persistent links and node-specific latent variables, with an application to the interbank market.
+European Journal of Operational Research, 281(1), pp.50-65.
+<a class="reference external" href="https://doi.org/10.1016/j.ejor.2019.07.024">https://doi.org/10.1016/j.ejor.2019.07.024</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/Logo_3D_NetworkSNS.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../download.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../algorithms.html">Algorithms</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../algorithms.html">Algorithms</a><ul>
+      <li>Previous: <a href="networksns.statistical_models.tgrg_simulation.html" title="previous chapter">networksns.statistical_models.tgrg_simulation</a></li>
+      <li>Next: <a href="networksns.statistical_models.tgrg_directed_simulation.html" title="next chapter">networksns.statistical_models.tgrg_directed_simulation</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Alberto Bucci.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/generated_alg/networksns.statistical_models.tgrg.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

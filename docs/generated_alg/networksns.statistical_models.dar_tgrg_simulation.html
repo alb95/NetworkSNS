@@ -1,0 +1,175 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>networksns.statistical_models.dar_tgrg_simulation &#8212; NetowrkSNS 1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="networksns.statistical_models.dar_tgrg" href="networksns.statistical_models.dar_tgrg.html" />
+    <link rel="prev" title="networksns.statistical_models.tgrg_directed" href="networksns.statistical_models.tgrg_directed.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="networksns-statistical-models-dar-tgrg-simulation">
+<h1>networksns.statistical_models.dar_tgrg_simulation<a class="headerlink" href="#networksns-statistical-models-dar-tgrg-simulation" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="networksns.statistical_models.dar_tgrg_simulation">
+<span class="sig-prename descclassname"><span class="pre">networksns.statistical_models.</span></span><span class="sig-name descname"><span class="pre">dar_tgrg_simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta_0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi_0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi_1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#networksns.statistical_models.dar_tgrg_simulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate a temporal network following the Discrete Auto-Regressive Temporally Generalized Random Graph model (<span class="math notranslate nohighlight">\(DAR\)</span>-<span class="math notranslate nohighlight">\(TGRG\)</span>).</p>
+<p>The <span class="math notranslate nohighlight">\(DAR\)</span>-<span class="math notranslate nohighlight">\(TGRG\)</span> model can be interpreted as a mixture of <span class="math notranslate nohighlight">\(DAR\)</span> and <span class="math notranslate nohighlight">\(TGRG\)</span> models where the persistence pattern associated with the copying mechanism of the <span class="math notranslate nohighlight">\(DAR\)</span> model coexists with the
+node fitnesses evolving in time according to the <span class="math notranslate nohighlight">\(TGRG\)</span> model.</p>
+<p>In the <span class="math notranslate nohighlight">\(DAR\)</span>-<span class="math notranslate nohighlight">\(TGRG\)</span> model <a class="footnote-reference brackets" href="#id2" id="id1">1</a> with temporal network described by a time series of adjacency matrices <span class="math notranslate nohighlight">\(\{A_{ij}^t\}_{i,j=1,\ldots, n}^{t=1,\ldots,s}\)</span>, each node is characterized by a latent variable <span class="math notranslate nohighlight">\(\theta_i^t\)</span>, namely the fitness of the node, which evolves in time by following a covariance stationary autoregressive process <span class="math notranslate nohighlight">\(AR(1)\)</span>:</p>
+<p><span class="math notranslate nohighlight">\(\phantom{aaaaaaaaaaaaaaaaaaa}\theta_i^t = \varphi_{0,i} + \varphi_{1,i} \theta_i^{t-1} + \epsilon_i^t,\)</span></p>
+<p>with <span class="math notranslate nohighlight">\(\varphi_{0,i}\in \mathbb{R}\)</span>, <span class="math notranslate nohighlight">\(|\varphi_{1,i}|&lt;1\)</span>, and i.i.d. normal innovations <span class="math notranslate nohighlight">\(\epsilon_i^t\sim \mathcal{N}(0, \sigma_i^2)\)</span>.</p>
+<p>Then, the observation equation for the network snapshot at time <span class="math notranslate nohighlight">\(t\)</span> is given by <span class="math notranslate nohighlight">\(\binom{N}{2}\)</span> independent Bernoulli trials whose conditional probability is:</p>
+<p><span class="math notranslate nohighlight">\(\phantom{aaaaaaaa}\mathbb{P}(A^t| \Theta^t, A^{t-1}, \mathbf{\alpha}) = \prod_{i&lt;j}\left( \alpha_{ij}\mathbb{I}_{A^t_{ij}A^{t-1}_{ij}} + (1-\alpha_{ij}) \frac{e^{A^t_{ij}(\theta_i^t + \theta_j^t)}}{1 + e^{\theta_i^t + \theta_j^t}}\right),\)</span></p>
+<p>where <span class="math notranslate nohighlight">\(\Theta^t \equiv \{\theta_i^t\}_{i = 1, \dots, n}\)</span> and <span class="math notranslate nohighlight">\(\alpha \equiv  \{\alpha_{ij}\}_{i,j = 1, \dots, n}\)</span> with <span class="math notranslate nohighlight">\(0&lt;\alpha_{ij}&lt;1\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>integer</em>) – Number of nodes in the graph.</p></li>
+<li><p><strong>T</strong> (<em>integer</em>) – Number of time snapshots.</p></li>
+<li><p><strong>theta_0</strong> (<em>array</em>) – Vector with the values of <span class="math notranslate nohighlight">\(\theta_i^0\)</span>. If it is set to ‘None’ the null vector is used. Default: ‘None’.</p></li>
+<li><p><strong>phi_0</strong> (<em>array</em>) – Vector with the values of <span class="math notranslate nohighlight">\({\varphi_0}_i\)</span>. If it is set to ‘None’ the vector of all 0.3 is used. Default: ‘None’.</p></li>
+<li><p><strong>phi_1</strong> (<em>array</em>) – Vector with the values of <span class="math notranslate nohighlight">\({\varphi_1}_i\)</span>. If it is set to ‘None’ the vector of all 0.5 is used. Default: ‘None’.</p></li>
+<li><p><strong>sigma</strong> (<em>array</em>) – Vector with the values of <span class="math notranslate nohighlight">\({\sigma}_i\)</span>. If it is set to ‘None’ the vector of all 0.3 is used. Default: ‘None’.</p></li>
+<li><p><strong>alpha</strong> (<em>array_like</em>) – Matrix that in the entry <span class="math notranslate nohighlight">\((i, j)\)</span> has the value <span class="math notranslate nohighlight">\(\alpha_{ij}\)</span>. If it is set to ‘None’ the matrix has 0.3 constant entries. Default ‘None’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>simulation</strong>: (list)
+Temporal network generated according to  a <span class="math notranslate nohighlight">\(DAR-TGRG\)</span> model.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="kn">from</span> <span class="nn">networksns</span> <span class="kn">import</span> <span class="n">statistical_models</span> <span class="k">as</span> <span class="n">sm</span>
+<span class="gp">&gt;&gt;&gt; </span> <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+<p>Define input parameters</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span>   <span class="n">n</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">T</span> <span class="o">=</span> <span class="mi">100</span>
+</pre></div>
+</div>
+<p>Simulate the temporal network</p>
+<blockquote>
+<div></div></blockquote>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span>  <span class="n">time_series</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">dar_tgrg_simulation</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>Mazzarisi, P., Barucca, P., Lillo, F. and Tantari, D., 2020.
+A dynamic network model with persistent links and node-specific latent variables, with an application to the interbank market.
+European Journal of Operational Research, 281(1), pp.50-65.
+<a class="reference external" href="https://doi.org/10.1016/j.ejor.2019.07.024">https://doi.org/10.1016/j.ejor.2019.07.024</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/Logo_3D_NetworkSNS.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../download.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../algorithms.html">Algorithms</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../algorithms.html">Algorithms</a><ul>
+      <li>Previous: <a href="networksns.statistical_models.tgrg_directed.html" title="previous chapter">networksns.statistical_models.tgrg_directed</a></li>
+      <li>Next: <a href="networksns.statistical_models.dar_tgrg.html" title="next chapter">networksns.statistical_models.dar_tgrg</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Alberto Bucci.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/generated_alg/networksns.statistical_models.dar_tgrg_simulation.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
