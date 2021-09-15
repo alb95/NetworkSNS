@@ -159,7 +159,10 @@ todo_include_todos = True
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+html_theme_options = {
+    'logo': 'Logo_3D_NetworkSNS.png',
+    'logo_name': False
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = []
