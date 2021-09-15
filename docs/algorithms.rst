@@ -12,31 +12,22 @@ ______________________________________________________
 .. autosummary::
    :toctree: generated_alg/
 
-
-
-
    centrality_measures.total_communicability
    centrality_measures.node_total_communicability
    centrality_measures.total_network_communicability
    centrality_measures.edge_total_communicability
-
    centrality_measures.subgraph_centrality
    centrality_measures.node_subgraph_centrality
-
    centrality_measures.total_directed_communicability
    centrality_measures.node_total_directed_communicability
    centrality_measures.directed_subgraph_centrality
    centrality_measures.node_directed_subgraph_centrality
-
    centrality_measures.broadcast_centrality
    centrality_measures.receive_centrality
    centrality_measures.approximated_broadcast_centrality
    centrality_measures.approximated_receive_centrality
-
    centrality_measures.trip_centrality
    centrality_measures.betweenness_centrality
-
-
    centrality_measures.exponential_symmetric_quadrature
    centrality_measures.exponential_quadrature
    centrality_measures.graph_slice
