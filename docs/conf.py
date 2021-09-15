@@ -20,8 +20,6 @@ import sphinx
 if sphinx.__version__ < "1.3":
     raise RuntimeError("Sphinx 1.3 or newer required")
 
-
-
 from mock import Mock as MagicMock
 import sphinx_rtd_theme
 
@@ -33,8 +31,9 @@ class Mock(MagicMock):
 
 numpydoc_show_class_members = False
 
-#MOCK_MODULES = ['networkx', 'numpy', 'networkx.utils', 'pygtk', 'gtk', 'gobject', 'argparse',  'pandas',
-#                'scipy']
+MOCK_MODULES = ['networkx', 'numpy', 'networkx.utils', 'pygtk', 'gtk', 'gobject', 'argparse',  'pandas', 'scipy.sparse.linalg', 'scipy.sparse', 'numpy.linalg', 'bisect', 'dynetx', 'scipy.integrate',
+                'scipy.optimize', 'scipy.stats', 'statsmodels.tsa.arima.model', 'csv'
+               'scipy']
 #sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 html_theme = "sphinx_rtd_theme"
