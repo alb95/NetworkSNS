@@ -240,6 +240,132 @@ def graph_slice(G, t):
 # =============================
 
 
+def subgraph_centrality(G, t=1, tol=1e-7, maxit=50):
+
+    """
+    Computes the subgraph centrality of all the nodes in graph :math:`G`.
+
+    The subgraph centrality of the :math:`i^{th}` node is given by :math:`[e^{tA}]_{ii}=e_i^T (e^{tA})e_i`,
+    where :math:`e_i` and :math:`A` denote respectively the :math:`i^{th}` vector of the canonical basis and the adjacency matrix of the graph [1]_.
+
+
+    Parameters
+    __________
+    G: Graph or DiGraph object
+        a graph.
+    t: scalar, optional
+     when exponentiating multiply the adjacency matrix by t, default: 1.
+    tol: float,optional
+     tolerance for convergence, relative accuracy, default: 1e-7.
+    maxit: integer, optional
+     maximum number of Lanczos iterations, default: 50.
+
+
+    :return: **sc** (dict)  subgraph centrality of all nodes in :math:`G`.
+
+    Examples
+    ________
+    .. code:: python
+
+     >>>  from networksns import centrality_measures as cm
+     >>>  import networkx as nx
+
+    Create graph :math:`G`.
+
+    .. code:: python
+
+     >>>    G = nx.Graph()
+     >>>    G.add_edge(1, 2)
+     >>>    G.add_edge(2, 3)
+            EdgeView([(1, 2), (2, 3)])
+
+    Compute the subgraph centrality.
+
+     >>>    sc = cm.subgraph_centrality(G)
+
+
+    References
+    ----------
+    .. [1] Ernesto Estrada and Juan A. Rodríguez-Velázquez (2005)
+           Subgraph centrality in complex networks,
+           Physical Review, Volume 71, Issue 5,
+           https://doi.org/10.1103/PhysRevE.71.056103
+    """
+
+    n = G.number_of_nodes()
+    node_list = list(G.nodes)
+    subgraph_centrality = np.zeros(n)
+    for i in range(n):
+        subgraph_centrality[i] = node_subgraph_centrality(G, node_list[i], t, tol, maxit)
+    centrality = dict(zip(node_list, subgraph_centrality))
+    return centrality
+
+
+def node_subgraph_centrality(G, u, t=1, tol=1e-7, maxit=50):
+
+    """
+    Computes the subgraph centrality of node :math:`u`.
+
+    If node :math:`u` is the :math:`i^{th}` node of the graph, the subgraph centrality of node :math:`u` is given by :math:`[e^{tA}]_{ii}=e_i^T (e^{tA})e_i`,
+    where :math:`e_i` and :math:`A` denote respectively the :math:`i^{th}` vector of the canonical basis and the adjacency matrix of the graph [1]_.
+
+    Parameters
+    __________
+
+    G: Graph object
+        a graph.
+    u: node_id
+        node in G.
+    t: scalar, optional
+     when exponentiating multiply the adjacency matrix by t, default: 1.
+    tol: float,optional
+     tolerance for convergence, relative accuracy, default: 1e-7.
+    maxit: integer, optional
+     maximum number of Lanczos iterations, default: 50.
+
+     :return: **sc_u** (float) subgraph centrality of node :math:`u`.
+
+    Examples
+    ________
+    .. code:: python
+
+     >>>  from networksns import centrality_measures as cm
+     >>>  import networkx as nx
+
+    Create graph :math:`G`.
+
+    .. code:: python
+
+     >>>    G = nx.Graph()
+     >>>    G.add_edge(1, 'u')
+     >>>    G.add_edge('u', 2)
+            EdgeView([(1, 'u'), ('u', 2)])
+
+    Compute the node total communicability
+
+     >>>    sc_u = cm.node_subgraph_centrality(G, 'u')
+
+    References
+    ----------
+    .. [1] Ernesto Estrada and Juan A. Rodríguez-Velázquez (2005)
+           Subgraph centrality in complex networks,
+           Physical Review, Volume 71, Issue 5,
+           https://doi.org/10.1103/PhysRevE.71.056103
+    """
+
+    n = G.number_of_nodes()
+    node_list = G.nodes
+    enumerated_nodes = dict(zip(node_list, arange(n)))
+    node_position = enumerated_nodes[u]
+    e_node = zeros(n)
+    e_node[node_position] = 1
+    Adj = nx.adjacency_matrix(G)
+    if t != 1:
+        Adj = Adj * t
+    subgraph_centrality = exponential_symmetric_quadrature(Adj, e_node, tol, maxit)
+    return subgraph_centrality
+
+
 def total_communicability(G, t=1):
 
     """
@@ -515,6 +641,169 @@ def edge_total_communicability(G, u, v, t=1, tol=1e-7, maxit=50):
 # =============================
 
 
+def directed_subgraph_centrality(G, t=1, tol=1e-7, maxit=50):
+
+    """
+    Computes the hub and the authority centrality of all nodes in a directed graph :math:`G`.
+
+    Denoting with :math:`A` the adjacency matrix of :math:`G`, with :math:`\\mathcal{A}=\\begin{pmatrix} 0 & A \\\\ A^T & 0 \\end{pmatrix}` the adjacency matrix of the associated undirected bipartite graph, with :math:`\\mathbf{0}` and :math:`e_i` the vector of all zeros and the :math:`i^{th}` vector of the canonical basis , hub centrality and authority centrality of the :math:`i^{th}` node of :math:`G` are defined as
+
+     :math:`\\phantom{aaaaaaa} h_i(G) = [e^\\mathcal{A}]_{ii} = e_i^T\\cosh{\\left(\\sqrt{A A^T}\\right)}e_i  = \\begin{pmatrix} e_i^T & \\mathbf{0}^T \\end{pmatrix}  e^{\\mathcal{A}}\\begin{pmatrix} e_i \\\\ \\mathbf{0} \\end{pmatrix}`,
+     :math:`\\phantom{aaaaa}a_i(G) = [e^\\mathcal{A}]_{N+i N+i} = e_i^T\\cosh{\\left(\\sqrt{A^T A}\\right)}e_i = \\begin{pmatrix} \\mathbf{0}^T & e_i^T \\end{pmatrix}  e^{\\mathcal{A}}\\begin{pmatrix} \\mathbf{0} \\\\ e_i \\end{pmatrix}`.
+
+    See [1]_ for further details.
+
+    Parameters
+    __________
+
+    G: DiGraph object
+        a directed graph.
+    t: scalar, optional
+     when computing the total hub and authority communicabilities multiply the adjacency matrix by :math:`t`, default: 1.
+    tol: float,optional
+     tolerance for convergence, relative accuracy, default: 1e-7.
+    maxit: integer, optional
+     maximum number of Lanczos iterations, default: 50
+
+    Returns
+    ________
+
+    hc: dict
+     hub centrality.
+    ac: dict
+     authority centrality.
+
+    Examples
+    ________
+
+    .. code:: python
+
+     >>>  from networksns import centrality_measures as cm
+     >>>  import networkx as nx
+
+    Create graph :math:`G`.
+
+    .. code:: python
+
+     >>>    G = nx.DiGraph()
+     >>>    G.add_edge(1, 2)
+     >>>    G.add_edge(1, 3)
+     >>>    G.add_edge(2, 3)
+     >>>    G.add_edge(3, 1)
+            OutEdgeView([(1, 2), (1, 3), (2, 3), (3, 1)])
+
+    Compute hub and authority centrality.
+
+     >>>    hc, ac = cm.directed_subgraph_centrality(G)
+
+    References
+    ----------
+    .. [1] Michele Benzi, Ernesto Estrada and Christine Klymko (2013),
+           Ranking hubs and authorities using matrix functions,
+           Linear Algebra Appl., 438, 2447–2474.
+           https://doi.org/10.1016/j.laa.2012.10.022
+    """
+    n = G.number_of_nodes()
+    node_list = list(G.nodes)
+    Adj = nx.adjacency_matrix(G)
+    Bip_Adj = bmat([[None, Adj], [Adj.transpose(), None]])
+    if t != 1:
+        Bip_Adj = Bip_Adj * t
+    hub_centrality = np.zeros(n)
+    authority_centrality = np.zeros(n)
+    for i in range(n):
+        h_node = zeros(2*n)
+        h_node[i] = 1
+        a_node = zeros(2*n)
+        a_node[n+i] = 1
+        hub_centrality[i] = exponential_symmetric_quadrature(Bip_Adj, h_node, tol, maxit)
+        authority_centrality[i] = exponential_symmetric_quadrature(Bip_Adj, a_node, tol, maxit)
+    hub_centrality = dict(zip(node_list, hub_centrality))
+    authority_centrality = dict(zip(node_list, authority_centrality))
+    return hub_centrality, authority_centrality
+
+
+def node_directed_subgraph_centrality(G, u, t=1, tol=1e-7, maxit=50):
+    """
+    Computes the hub and the authority centrality of node :math:`u`.
+
+    If node :math:`u` is the :math:`i^{th}` node of the graph, denoting with :math:`A` the adjacency matrix of :math:`G`, with :math:`\\mathcal{A}=\\begin{pmatrix} 0 & A \\\\ A^T & 0 \\end{pmatrix}` the adjacency matrix of the associated undirected bipartite graph, with :math:`\\mathbf{0}` and :math:`e_i` the vector of all zeros and the :math:`i^{th}` vector of the canonical basis , hub centrality and authority centrality of the :math:`i^{th}` node of :math:`G` are defined as
+
+     :math:`\\phantom{aaaaaaa} h_i(G) = [e^\\mathcal{A}]_{ii} = e_i^T\\cosh{\\left(\\sqrt{A A^T}\\right)}e_i  = \\begin{pmatrix} e_i^T & \\mathbf{0}^T \\end{pmatrix}  e^{\\mathcal{A}}\\begin{pmatrix} e_i \\\\ \\mathbf{0} \\end{pmatrix}`,
+     :math:`\\phantom{aaaaa}a_i(G) = [e^\\mathcal{A}]_{N+i N+i} = e_i^T\\cosh{\\left(\\sqrt{A^T A}\\right)}e_i = \\begin{pmatrix} \\mathbf{0}^T & e_i^T \\end{pmatrix}  e^{\\mathcal{A}}\\begin{pmatrix} \\mathbf{0} \\\\ e_i \\end{pmatrix}`.
+
+    See [1]_ for further details.
+
+    Parameters
+    __________
+
+    G: DiGraph object
+        a directed graph.
+    u: node_id
+        node in :math:`G`.
+    t: scalar, optional
+     when computing the total hub and authority communicabilities multiply the adjacency matrix by :math:`t`, default: 1.
+    tol: float,optional
+     tolerance for convergence, relative accuracy, default: 1e-7.
+    maxit: integer, optional
+     maximum number of Lanczos iterations, default: 50
+
+    Returns
+    ________
+
+    hc_u: dict
+     hub centrality of :math:`u`..
+    ac_u: dict
+     authority centrality of :math:`u`..
+
+    Examples
+    ________
+
+    .. code:: python
+
+     >>>  from networksns import centrality_measures as cm
+     >>>  import networkx as nx
+
+    Create graph :math:`G`.
+
+    .. code:: python
+
+     >>>    G = nx.DiGraph()
+     >>>    G.add_edge(1, 2)
+     >>>    G.add_edge(1, 3)
+     >>>    G.add_edge(2, 3)
+     >>>    G.add_edge(3, 1)
+            OutEdgeView([(1, 2), (1, 3), (2, 3), (3, 1)])
+
+    Compute hub and authority centrality.
+
+     >>>    hc, ac = cm.directed_subgraph_centrality(G)
+
+    References
+    ----------
+    .. [1] Michele Benzi, Ernesto Estrada and Christine Klymko (2013),
+           Ranking hubs and authorities using matrix functions,
+           Linear Algebra Appl., 438, 2447–2474.
+           https://doi.org/10.1016/j.laa.2012.10.022
+    """
+
+    n = G.number_of_nodes()
+    node_list = list(G.nodes)
+    enumerated_nodes = dict(zip(node_list, arange(n)))
+    node_position = enumerated_nodes[u]
+    Adj = nx.adjacency_matrix(G)
+    Bip_Adj = bmat([[None, Adj], [Adj.transpose(), None]])
+    if t != 1:
+        Bip_Adj = Bip_Adj * t
+    h_node = zeros(2 * n)
+    h_node[node_position] = 1
+    a_node = zeros(2 * n)
+    a_node[n + node_position] = 1
+    hub_centrality = exponential_symmetric_quadrature(Bip_Adj, h_node, tol, maxit)
+    authority_centrality  = exponential_symmetric_quadrature(Bip_Adj, a_node, tol, maxit)
+    return hub_centrality, authority_centrality
+
+
 def total_directed_communicability(G, t=1):
 
     """
@@ -525,7 +814,7 @@ def total_directed_communicability(G, t=1):
      :math:`T_{h}C(G) = \\mathbf{1}^T\\cosh{\\left(\\sqrt{A A^T}\\right)}\\mathbf{1} = \\begin{pmatrix} \\mathbf{1}^T & \\mathbf{0}^T \\end{pmatrix}  e^{\\mathcal{A}}\\begin{pmatrix} \\mathbf{1} \\\\ \\mathbf{0} \\end{pmatrix}`,
      :math:`T_{a}C(G) = \\mathbf{1}^T\\cosh{\\left(\\sqrt{A^T A}\\right)}\\mathbf{1} = \\begin{pmatrix} \\mathbf{0}^T & \\mathbf{1}^T \\end{pmatrix}  e^{\\mathcal{A}}\\begin{pmatrix} \\mathbf{0} \\\\ \\mathbf{1} \\end{pmatrix}`.
 
-    See [1] for further details.
+    See [1]_ for further details.
 
     Parameters
     __________
@@ -601,7 +890,7 @@ def node_total_directed_communicability(G, u, t=1, tol=1e-7, maxit=50):
      :math:`T_{h}C(u) = \\mathbf{e_i}^T\\sinh^{\\diamondsuit}(A)\\mathbf{1} = \\begin{pmatrix} \\mathbf{e_i}^T & \\mathbf{0}^T \\end{pmatrix}  e^{\\mathcal{A}}\\begin{pmatrix} \\mathbf{0} \\\\ \\mathbf{1} \\end{pmatrix},`
      :math:`T_{a}C(u) = \\mathbf{e_i}^T\\sinh^{\\diamondsuit}(A)^T\\mathbf{1} = \\begin{pmatrix} \\mathbf{0}^T & \\mathbf{e_i}^T \\end{pmatrix}  e^{\\mathcal{A}}\\begin{pmatrix} \\mathbf{1} \\\\ \\mathbf{0} \\end{pmatrix}.`
 
-    See [1] for further details.
+    See [1]_ for further details.
 
 
     Parameters
