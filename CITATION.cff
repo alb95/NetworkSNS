@@ -1,0 +1,9 @@
+cff-version: 1.0.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Bucci
+    given-names: Alberto
+    doi: DOI: 10.5281/zenodo.8073705
+title: alb95/NetworkSNS
+version: v1.0.0
+date-released: 2022-06-23
