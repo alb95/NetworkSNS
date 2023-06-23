@@ -130,7 +130,7 @@ def exponential_symmetric_quadrature(A, u, tol=1e-7, maxit=50):
 def exponential_quadrature(A, u, v, tol=1e-7, maxit=50):
 
     """
-    Computes :math:`q=u^T e^A v`. For the computation polarization rule and Lanczos iteration are used [1]_.
+    Computes :math:`q=u^T e^A v`. For the computation the polarization rule and Lanczos iteration are used [1]_.
 
     Parameters
     __________
